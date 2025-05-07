@@ -172,6 +172,9 @@
                     { bucket: "500-1000", n: 86 },
                     { bucket: "1000-2000", n: 45 },
                     { bucket: "2000+", n: 12 }
+                ],
+                summary_results: [
+                    { mean: 567.8, median: 512 }
                 ]
             };
             
@@ -258,19 +261,34 @@
             
             function displayResults(data) {
                 // Check if we're using the new API format
-                let labels, counts;
+                let labels, counts, meanValue;
                 
                 if (data.votes) {
                     // Using the real API response format
                     labels = data.votes.map(item => item.bucket);
                     counts = data.votes.map(item => item.n);
+                    
+                    // Extract mean value from summary_results if available
+                    if (data.summary_results && data.summary_results.length > 0 && data.summary_results[0].mean !== undefined) {
+                        meanValue = Math.round(data.summary_results[0].mean);
+                    }
                 } else if (data.ranges) {
                     // Using the old mock data format (for testing)
                     labels = data.ranges.map(item => item.range);
                     counts = data.ranges.map(item => item.count);
+                    // Set a default mean for testing
+                    meanValue = 567;
                 } else {
                     console.error('Unknown data format:', data);
                     return;
+                }
+                
+                // Update the graph title with the mean if available
+                const graphTitle = document.querySelector('.graph-title');
+                if (meanValue !== undefined) {
+                    graphTitle.textContent = `Average response so far: ${meanValue} mergers`;
+                } else {
+                    graphTitle.textContent = 'Survey responses so far';
                 }
                 
                 // If chart exists, destroy it
