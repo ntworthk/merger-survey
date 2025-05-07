@@ -328,6 +328,13 @@
                                 title: {
                                     display: true,
                                     text: 'Number of responses'
+                                },
+                                // Only show integer ticks
+                                ticks: {
+                                    stepSize: 1,
+                                    callback: function(value) {
+                                        return Number.isInteger(value) ? value : '';
+                                    }
                                 }
                             },
                             x: {
